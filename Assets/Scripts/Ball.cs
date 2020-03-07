@@ -4,30 +4,41 @@ using UnityEngine;
 
 public class Ball : MonoBehaviour
 {
-    // Start is called before the first frame update
+    public int speed; //скорость мяча.
+
+    bool pullBall; // зажим мяча.
+    Platform platform; // объект с типом Platform.
+    Rigidbody2D rb; // физика объекта.
     void Start()
     {
-        
+        pullBall = false;
+        platform = FindObjectOfType<Platform>(); // Находит объект.
+        rb = GetComponent<Rigidbody2D>(); //Находит компонент на объекте.
     }
 
-    // Update is called once per frame
     void Update()
     {
-        
+        if (!pullBall)
+        {
+            LockBallToPlatform();
+        }
+
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void LockBallToPlatform()
     {
-        Debug.Log("Мячик столкнулся");
+        transform.position = new Vector3(platform.transform.position.x, transform.position.y, 0); //Приклеивание мяча к платформе.
+        if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space)) //Проверка запуска мяча.
+        {
+            pullBall = true;
+            LaunchBall();
+        }
     }
 
-    private void OnCollisionExit2D(Collision2D collision)
+    public void LaunchBall()
     {
-        Debug.Log("Мячик оттолкнулся");
-    }
-
-    private void OnCollisionStay2D(Collision2D collision)
-    {
-        Debug.Log("Мячик соприкасается");
+        // добавление толчка при нажатии на кнопку.
+        Vector2 force = new Vector2(0, speed);
+        rb.AddForce(force);
     }
 }
